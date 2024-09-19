@@ -42,8 +42,8 @@
 
 ;; Add frame borders and window dividers
 (modify-all-frames-parameters
- '((right-divider-width . 20)
-   (internal-border-width . 20)))
+ '((right-divider-width . 30)
+   (internal-border-width . 0)))
 (dolist (face '(window-divider
                 window-divider-first-pixel
                 window-divider-last-pixel))
