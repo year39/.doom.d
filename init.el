@@ -48,8 +48,9 @@
        grammar             ; tasing grammar mistake every you make
 
        :tools
-       lookup
+       (lsp +eglot)
        (lsp +peek)
+       lookup
        (debugger +lsp)     
        tree-sitter
        direnv
