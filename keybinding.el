@@ -16,64 +16,29 @@
 (map! :leader
       "m" nil
       :prefix ("m" . "er/mark")
-      :desc "mark whole buffer"         :nv "a" #'mark-whole-buffer
-      :desc "mark paragraph"            :nv "p" #'er/mark-paragraph
-      :desc "mark word"                 :nv "w" #'er/mark-word
-      :desc "mark sentence"             :nv "s" #'er/mark-sentence
-      :desc "mark function"             :nv "f" #'er/mark-defun
-      :desc "mark comment"              :nv "c" #'er/mark-comment
-      :desc "mark url"                  :nv "u" #'er/mark-url
-      :desc "mark email"                :nv "e" #'er/mark-email
-      :desc "mark symbol"               :nv "s" #'er/mark-symbol
-      :desc "mark quotes"               :nv "q" #'er/mark-outside-quotes
-      :desc "mark inside quotes"        :nv "i q" #'er/mark-inside-quotes
-      :desc "mark method call"          :nv "m" #'er/mark-method-call
-      :desc "mark inside parens"        :nv "i p" #'er/mark-inside-pairs
+      :desc "Mark buffer"         :nv "a" #'mark-whole-buffer
+      :desc "Mark paragraph"            :nv "p" #'er/mark-paragraph
+      :desc "Mark word"                 :nv "w" #'er/mark-word
+      :desc "Mark sentence"             :nv "s" #'er/mark-sentence
+      :desc "Mark function"             :nv "f" #'er/mark-defun
+      :desc "Mark comment"              :nv "c" #'er/mark-comment
+      :desc "Mark url"                  :nv "u" #'er/mark-url
+      :desc "Mark email"                :nv "e" #'er/mark-email
+      :desc "Mark symbol"               :nv "s" #'er/mark-symbol
+      :desc "Mark quotes"               :nv "q" #'er/mark-outside-quotes
+      :desc "Mark inside quotes"        :nv "i q" #'er/mark-inside-quotes
+      :desc "Mark method call"          :nv "m" #'er/mark-method-call
+      :desc "Mark inside parens"        :nv "i p" #'er/mark-inside-pairs
       )
 
 (map! :leader
-      :desc "other window"              :nv     "RET"   #'other-window
-      :desc "open line"                 :nv     "i n"   #'my/open-line
-      :desc "yank from kill-ring"       :nvig   "i k"   #'(lambda () (interactive) (yank-pop))
-      :desc "increase-height 10"        :nv     "w +"   #'(lambda () (interactive) (evil-window-increase-height 10))
-      :desc "decrease-height 10"        :nv     "w -"   #'(lambda () (interactive) (evil-window-decrease-height 10))
-      :desc "format whole buffer"       :nv     "c f"   #'lsp-format-region
-      :desc "Find usage"                :nv     "c u"   #'lsp-ui-peek-find-references
-      :desc "Glance"                    :nv     "c g"   #'lsp-ui-doc-glance
-      :desc "Jump backward"             :nv     "c h"   #'lsp-ui-peek-jump-backward
-      :desc "Jump forward"              :nv     "c l"   #'lsp-ui-peek-jump-forward
-      :desc "Format region"             :nv     "c f"   #'lsp-format-region
-      :desc "Show docs"                 :nv     "c s"   #'lsp-ui-doc-show
+      :desc "Other window"              :nv     "RET"   #'other-window
+      :desc "Open line"                 :nv     "i n"   #'my/open-line
+      :desc "Yank kill-ring"       :nvig   "i k"   #'(lambda () (interactive) (yank-pop))
+      :desc "Increase-height 10"        :nv     "w +"   #'(lambda () (interactive) (evil-window-increase-height 10))
+      :desc "Decrease-height 10"        :nv     "w -"   #'(lambda () (interactive) (evil-window-decrease-height 10))
+      :desc "Jump backward"             :nv     "c h"   #'evil-jump-backward
+      :desc "Jump forward"              :nv     "c l"   #'evil-jump-forward
+      :desc "Format buffer"             :nv     "c b"   #'+format/buffer
+      :desc "Format region"             :nv     "c r"   #'+format/region
       )
-
-(map! :map dap-mode-map
-      :leader
-      :prefix ("d" . "dap")
-      ;; basics
-      :desc "dap next"          "n" #'dap-next
-      :desc "dap step in"       "i" #'dap-step-in
-      :desc "dap step out"      "o" #'dap-step-out
-      :desc "dap continue"      "c" #'dap-continue
-      :desc "dap hydra"         "h" #'dap-hydra
-      :desc "dap debug restart" "r" #'dap-debug-restart
-      :desc "dap debug"         "s" #'dap-debug
-
-      ;; debug
-      :prefix ("dd" . "Debug")
-      :desc "dap debug recent"  "r" #'dap-debug-recent
-      :desc "dap debug last"    "l" #'dap-debug-last
-
-      ;; eval
-      :prefix ("de" . "Eval")
-      :desc "eval"                "e" #'dap-eval
-      :desc "eval region"         "r" #'dap-eval-region
-      :desc "eval thing at point" "s" #'dap-eval-thing-at-point
-      :desc "add expression"      "a" #'dap-ui-expressions-add
-      :desc "remove expression"   "d" #'dap-ui-expressions-remove
-
-      :prefix ("db" . "Breakpoint")
-      :desc "dap breakpoint toggle"      "b" #'dap-breakpoint-toggle
-      :desc "dap breakpoint condition"   "c" #'dap-breakpoint-condition
-      :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
-      :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message)
-

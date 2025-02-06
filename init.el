@@ -1,108 +1,172 @@
-;;; init.el -*- lexical-binding: t; -*-
+;;; ~/.doom.d/init.el -*- lexical-binding: t; -*-
 
-(doom! :input
-
-       :completion
-       (company +childframe)
+(doom! :completion
+       ;; (company +childframe)
+       corfu
+       ;;ivy
+       ;;helm
+       ;;ido
        (vertico +icons)
 
        :ui
-       doom                ; what makes DOOM look the way it does
-       doom-dashboard      ; a nifty splash screen for Emacs
-       doom-quit           ; DOOM quit-message prompts when you quit Emacs
-       hl-todo             ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
-       indent-guides       ; highlighted indent columns
-       modeline            ; snazzy, Atom-inspired modeline, plus API
-       ophints             ; highlight the region an operation acts on
-       (popup +defaults)   ; tame sudden yet inevitable temporary windows
-       (vc-gutter +pretty) ; vcs diff in the fringe
-       vi-tilde-fringe     ; fringe tildes to mark beyond EOB
-       (window-select      ; visually switch windows
-        +switch-window)
-       workspaces          ; tab emulation, persistence & separate workspaces
+       ;;deft
+       doom
+       doom-dashboard
+       doom-quit
+       (emoji +unicode)
+       ;;fill-column
+       hl-todo
+       ;;hydra
+       indent-guides                    ; highlighted indent columns
+       ;;ligatures
+       ;;minimap
+       modeline
+       ;;nav-flash
+       ;;neotree
+       ophints
+       (popup +defaults)
+       ;;treemacs
+       ;;tree-sitter
+       ;;unicode
+       ;;tabs
+       (vc-gutter +diff-hl +pretty)
+       (window-select +switch-window)   ; visually switch windows
+       workspaces
+       ;;zen
+       ;;vi-tilde-fringe
+
+       :input
+       ;;chinese
+       ;;japanese
 
        :editor
-       (evil +everywhere)  ; come to the dark side, we have cookies
-       file-templates      ; auto-snippets for empty files
-       fold                ; (nigh) universal code folding
+       (evil +everywhere)
+       file-templates
+       fold              ; (nigh) universal code folding
+       ;;objed
        (format +onsave)  ; automated prettiness
+       ;;lispy           ; vim for lisp, for people who dont like vim
        multiple-cursors  ; editing in many places at once
-       snippets            ; my elves. They type so I don't have to
-       word-wrap           ; soft wrapping with language-aware indent
+       ;;parinfer        ; turn lisp into python, sort of
+       rotate-text       ; cycle region at point between text candidates
+       snippets
+       word-wrap
 
        :emacs
-       dired               ; making dired pretty [functional]
-       electric            ; smarter, keyword-based electric-indent
-       (ibuffer            ; interactive buffer management
-        +icons)
-       (undo               ; persistent, smarter undo for your inevitable mistakes
-        +tree)
-       vc                  ; version-control and Emacs, sitting in a tree
+       dired             ; making dired pretty [functional]
+       electric          ; smarter, keyword-based electric-indent
+       (ibuffer +icons)  ; interactive buffer management
+       (undo +tree)      ; persistent, smarter undo for your inevitable mistakes
+       vc
 
        :term
-       vterm               ; the best terminal emulation in Emacs
+       ;;eshell            ; a consistent, cross-platform shell (WIP)
+       ;;shell
+       ;;term              ; terminals in Emacs
+       vterm
 
        :checkers
-       syntax              ; tasing you for every semicolon you forget
-       (spell +flyspell)   ; tasing you for misspelling mispelling
-       grammar             ; tasing grammar mistake every you make
+       syntax
+       spell
+       ;;grammar
 
        :tools
-       (lsp +eglot)
-       (lsp +peek)
-       lookup
-       (debugger +lsp)     
+       (lsp +eglot +peek)
        tree-sitter
+       ansible
+       ;;(debugger +lsp)
        direnv
+       ;;docker
        editorconfig        ; let someone else argue about tabs vs spaces
-       (eval +overlay)     ; run code, run (also, repls)
+       ;;ein               ; tame Jupyter notebooks with emacs
+       (eval +overlay)
+       ;;gist
+       (lookup +docsets +dictionary)
+       ;;macos             ; MacOS-specific commands
        (magit +forge)      ; a git porcelain for Emacs
+       ;;make              ; run make tasks from Emacs
        (pass +auth)        ; password manager for nerds
-       upload              ; map local to remote projects via ssh/ftp
-       terraform
+       ;;pdf               ; pdf enhancements
+       ;;prodigy           ; FIXME managing external services & code builders
+       ;;rgb               ; creating color strings
+       terraform           ; infrastructure as code
+       ;;tmux              ; an API for interacting with tmux
+       ;;upload            ; map local to remote projects via ssh/ftp
 
        :os
-       (:if IS-MAC macos)  ; improve compatibility with macOS
-       tty                 ; improve the terminal Emacs experience
+       ;;arch
+       (:if IS-MAC macos)
+       ;;nixos
+       tty                 ; enable terminal integration
 
        :lang
-       (cc +lsp)           ; C > C++ == 1
-       common-lisp         ; if you've seen one lisp, you've seen them all
-       data                ; config/data formats
-       emacs-lisp          ; drown in parentheses
-       (go +lsp)           ; the hipster dialect
-       (graphql +lsp)      ; Give queries a REST
-       (json +lsp)         ; At least it ain't XML
-       ;;(java +lsp)       ; the poster child for carpal tunnel syndrome
+       ;;agda
+       ;;assembly
+       ;;beancount
+       ;;(cc +lsp)
+       ;;crystal
+       ;;clojure
+       ;;(csharp +unity +lsp)
+       ;;common-lisp
+       ;;coq
+       ;;data
+       ;;dart
+       ;;erlang
+       ;;elixir
+       ;;elm
+       emacs-lisp
+       ;;ess
+       ;;faust
+       ;;fortran
+       ;;fsharp
+       ;;(gdscript +lsp)
+       (go +lsp)
+       (graphql +lsp)
+       ;;haskell
+       ;;hy
+       ;;(java +meghanada)
        (javascript +lsp)
-       ;;kotlin            ; a better, slicker Java(Script)
-       ;;latex             ; writing papers in Emacs has never been so fun
-       markdown            ; writing docs for people to ignore
-       (org                ; organize your plain life in plain text
-        +present
-        +roam2
-        +journal
-        +pretty)
-       ;;php               ; perl's insecure younger brother
-       (purescript +lsp)          ; javascript, but functional
-       (python             ; beautiful is better than ugly
-        +lsp
-        +pyright
-        +conda)
-       rest                ; Emacs as a REST client
-       rst                 ; ReST in peace
-       ;;rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
-       ;;scala             ; java, but good
-       (sh +lsp)           ; she sells {ba,z,fi}sh shells on the C xor
-       (web +lsp)          ; the tubes
-       (yaml +lsp)         ; JSON, but readable
-       ;;zig               ; C, but simpler
+       ;;julia
+       ;;latex
+       ;;ledger
+       ;;(lua +fennel)
+       markdown
+       ;;nim
+       ;;nix
+       ;;ocaml
+       (org +dragndrop +roam2 +present)
+       ;;perl
+       ;;php
+       ;;plantuml
+       ;;purescript
+       (python +lsp +pyright +conda)
+       ;;qt
+       ;;racket
+       ;;rest
+       ;;ruby
+       (rust +lsp)
+       ;;scala
+       ;;(scheme +guile)
+       sh
+       ;;sml
+       ;;swift
+       web
+       yaml
+       ;;(zig +lsp)
+       (json +lsp)
 
        :email
-       ;;(mu4e +org +gmail)
+       ;;(mu4e +gmail)       ; WIP
+       ;;notmuch             ; WIP
+       ;;(wanderlust +gmail) ; WIP
 
        :app
-       calendar
+       ;;calendar
+       everywhere
+       ;;irc
+       ;;(rss +org)
+       ;;ereader
 
        :config
+       ;;literate
        (default +bindings +smartparens))
