@@ -2,8 +2,6 @@
 
 ;;____________________________________________________________
 ;;
-;; Replace highlight when typing
-(delete-selection-mode 1)
 
 ;; doom theme (doom-one, doom-dracula)
 (setq doom-theme 'doom-dracula
@@ -17,14 +15,8 @@
 ;; Start fullscreen
 (add-hook 'window-setup-hook #'toggle-frame-fullscreen)
 
-;; don't yank on paste
-(setq-default evil-kill-on-visual-paste nil)
-
 ;; Remove duplicates in commands history
 (setq history-delete-duplicates t)
-
-;; Replace highlight when typing
-(delete-selection-mode 1)
 
 ;; For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
@@ -33,9 +25,9 @@
 (setq projectile-track-known-projects-automatically nil)
 
 ;; Minimal UI
-(menu-bar-mode 0)
-(tool-bar-mode 0)
-(scroll-bar-mode 0)
+(setq menu-bar-mode nil)
+(setq tool-bar-mode nil)
+(setq scroll-bar-mode nil)
 
 ;; don't yank on paste
 (setq evil-kill-on-visual-paste nil)
@@ -44,100 +36,33 @@
 (setq auth-sources
       '((:source "~/.authinfo.gpg")))
 
-;; disable lsp formatting (use prettier)
-;; https://github.com/doomemacs/doomemacs/issues/4158
-(setq-hook! 'typescript-mode-hook +format-with-lsp nil)
-
 ;; the default is too high and makes vterm to slow
 (setq vterm-timer-delay 0.01)
 
-;;____________________________________________________________
-;; org configs
-(use-package! org
-  :init
-  (setq-default org-agenda-files '("~/Dropbox/org-agenda"))
-  :config
-  (setq org-startup-folded t)
-  (setq org-hide-emphasis-markers t))
+;; Prevents some cases of Emacs flickering.
+(add-to-list 'default-frame-alist '(inhibit-double-buffering . t))
 
-;; Use 12-hour clock instead of 24-hour in agenda view
-(setq org-agenda-timegrid-use-ampm 1)
+;; Manual auto complete
+;; (after! corfu
+;;   (setq corfu-auto nil))
 
-;; enable auto fill for org
-(add-hook 'org-mode-hook 'turn-on-auto-fill)
-(add-hook 'markdown-mode-hook 'turn-on-auto-fill)
+;; An evil mode indicator is redundant with cursor shape
+(setq doom-modeline-modal nil)
 
-;;____________________________________________________________
+;; Focus new window after splitting
+(setq evil-split-window-below t
+      evil-vsplit-window-right t)
+
+;; add clipboard to the kill-ring before next kill
+(setq save-interprogram-paste-before-kill t)
 
 ;;____________________________________________________________
 ;; lsp configs
-(use-package! lsp-mode
+(after! lsp
   :config
   ;; disable code underlines/flychecks
   ;; (setq lsp-diagnostics-provider :none)
-  :custom
-  (lsp-headerline-breadcrumb-enable t))
-
-;;____________________________________________________________
-;; modeline configs
-(after! doom-modeline
-  (remove-hook 'doom-modeline-mode-hook #'size-indication-mode) ; filesize in modeline
-  (remove-hook 'doom-modeline-mode-hook #'column-number-mode)   ; cursor column in modeline
-  (add-hook 'doom-modeline-mode-hook #'display-time-mode)
-  (line-number-mode nil)
-  (setq doom-modeline-persp-name t)
-  (setq doom-modeline-buffer-encoding nil))
-
-;;____________________________________________________________
-;; ibuffer configs
-(setq ibuffer-expert t)  ;; no prompts
-(add-hook 'ibuffer-hook
-          (lambda ()
-            (ibuffer-projectile-set-filter-groups)
-            (unless (eq ibuffer-sorting-mode 'alphabetic)
-              (ibuffer-do-sort-by-alphabetic))))
-
-;;____________________________________________________________
-;; some helper functions
-
-;; insert a new line right after the cursor's position
-(defun my/open-line ()
-  (interactive)
-  (save-excursion
-    (move-end-of-line 1)
-    (open-line 1)))
-
-;; C-Backspace kill one word, a space character or a new line character
-(defun my/kill-backward-smart ()
-  (interactive)
-  (cond
-   ((looking-back (rx (char word)) 1)
-    (backward-kill-word 1))
-   ((looking-back (rx (char blank)) 1)
-    (delete-horizontal-space t))
-   (t
-    (backward-delete-char 1))))
-
-;; Browse repo in browser
-(defun my/browse-repo()
-  (interactive)
-  (browse-url
-   (let
-       ((rev (magit-rev-abbrev "HEAD"))
-        (repo (forge-get-repository 'stub))
-        (file (magit-file-relative-name buffer-file-name))
-        (highlight
-         (if
-             (use-region-p)
-             (let ((l1 (line-number-at-pos (region-beginning)))
-                   (l2 (line-number-at-pos (- (region-end) 1))))
-               (format "#L%d-L%d" l1 l2))
-           ""
-           )))
-     (forge--format repo (if file
-                             "https://%h/%o/%n/blob/%r/%f%L"
-                           "https://%h/%o/%n/blob/%r")
-                    `((?r . ,rev) (?f . ,file) (?L . ,highlight))))))
+  (setq lsp-headerline-breadcrumb-enable t))
 
 ;;____________________________________________________________
 ;;lsp-headerline remove underlines
@@ -161,35 +86,27 @@
  '(lsp-headerline-breadcrumb-symbols-info-face ((t (:inherit lsp-headerline-breadcrumb-symbols-face :underline nil))))
  '(lsp-headerline-breadcrumb-symbols-warning-face ((t (:inherit lsp-headerline-breadcrumb-symbols-face :underline nil)))))
 
-(setq lsp-clients-clangd-args
-      '("-j=3"
-        "--background-index"
-        "--clang-tidy"
-        "--completion-style=detailed"
-        "--header-insertion=never"
-        "--header-insertion-decorators=0"))
-(after! lsp-clangd (set-lsp-priority! 'clangd 2))
+;;____________________________________________________________
+;; modeline configs
+(after! doom-modeline
+  (remove-hook 'doom-modeline-mode-hook #'size-indication-mode) ; filesize in modeline
+  (remove-hook 'doom-modeline-mode-hook #'column-number-mode)   ; cursor column in modeline
+  (add-hook 'doom-modeline-mode-hook #'display-time-mode)
+  (setq line-number-mode nil)
+  (setq doom-modeline-persp-name t)
+  (setq doom-modeline-buffer-encoding nil))
 
 ;;____________________________________________________________
-;; set-mark symbol at point
-(defun my/mark-symbol-at-point ()
-  (interactive)
-  (unless (region-active-p)
-    (let (bounds pos1 pos2)
-      (setq bounds (bounds-of-thing-at-point 'symbol))
-      (setq pos1 (car bounds))
-      (setq pos2 (cdr bounds))
-      (goto-char pos1)
-      (push-mark pos1 t t)
-      (goto-char pos2)
-      (setq transient-mark-mode  (cons 'only transient-mark-mode)))))
+;; ibuffer configs
+(setq ibuffer-expert t)  ;; no prompts
+(add-hook 'ibuffer-hook
+          (lambda ()
+            (ibuffer-projectile-set-filter-groups)
+            (unless (eq ibuffer-sorting-mode 'alphabetic)
+              (ibuffer-do-sort-by-alphabetic))))
 
-(setq +format-with-lsp nil)
+;;___(setq +format-with-lsp nil)
 (setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
-
-(after! dtrt-indent
-  (add-to-list 'dtrt-indent-hook-mapping-list '(typescript-mode javascript typescript-indent-level)))
 
 ;; add spacing between windows
 (modify-all-frames-parameters
@@ -197,15 +114,45 @@
    (bottom-divider-width . 5)))
 
 ;;____________________________________________________________
+;; org configs
+(setq org-directory "~/org/"
+      org-roam-directory (file-name-concat org-directory "org-roam/")
+      org-roam-db-location (file-name-concat org-directory ".org-roam.db")
+      org-roam-dailies-directory (file-name-concat org-directory "journal/")
+      org-archive-location (file-name-concat org-directory ".archive/%s::")
+      org-agenda-files (list org-directory))
+
+(after! org
+  (setq org-startup-folded 'show2levels
+        org-hide-emphasis-markers t
+        org-startup-folded t
+        org-agenda-timegrid-use-ampm 1 ;; Use 12-hour clock instead of 24-hour in agenda view
+        org-ellipsis " [...] "
+        org-capture-templates
+        '(("t" "todo" entry (file+headline "todo.org" "Inbox")
+           "* [ ] %?\n%i\n%a"
+           :prepend t)
+          ("d" "deadline" entry (file+headline "todo.org" "Inbox")
+           "* [ ] %?\nDEADLINE: <%(org-read-date)>\n\n%i\n%a"
+           :prepend t)
+          ("s" "schedule" entry (file+headline "todo.org" "Inbox")
+           "* [ ] %?\nSCHEDULED: <%(org-read-date)>\n\n%i\n%a"
+           :prepend t)
+          ("c" "check out later" entry (file+headline "todo.org" "Check out later")
+           "* [ ] %?\n%i\n%a"
+           :prepend t)
+          )))
+
+;; enable auto fill for org
+(add-hook 'org-mode-hook 'turn-on-auto-fill)
+(add-hook 'markdown-mode-hook 'turn-on-auto-fill)
+
+;;____________________________________________________________
 ;; org-roam configs
-(use-package! org-roam
-  :init
-  (setq org-roam-directory "~/Dropbox/org-roam"
-        org-roam-db-location "~/Dropbox/org-roam/org-roam.db")
-  (org-roam-db-autosync-mode t)
-  :config
+(after! org-roam
   (org-roam-db-sync)
-  (setq org-roam-node-display-template
+  (setq org-roam-db-autosync-mode t
+        org-roam-node-display-template
         (concat "${title:*} "
                 (propertize "${tags:10}" 'face 'org-tag))))
 
@@ -250,6 +197,8 @@
 ;; accept completion from copilot and fallback to company
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
+  :config
+  (setq copilot-indent-offset-warning-disable t)
   :bind (:map copilot-completion-map
               ("<tab>" . 'copilot-accept-completion)
               ("TAB" . 'copilot-accept-completion)
@@ -265,24 +214,67 @@
 ;; load key bindings
 (load-file "~/.doom.d/keybinding.el")
 
-;;____________________________________________________________
-;;
-(use-package! kubernetes
-  :commands (kubernetes-overview)
-  :config
-  (setq kubernetes-poll-frequency 3600
-        kubernetes-redraw-frequency 3600))
+;;_________________________________________________________
+;; some helper functions
+
+;; insert a new line right after the cursor's position
+(defun my/open-line ()
+  (interactive)
+  (save-excursion
+    (move-end-of-line 1)
+    (open-line 1)))
+
+;; C-Backspace kill one word, a space character or a new line character
+(defun my/kill-backward-smart ()
+  (interactive)
+  (cond
+   ((looking-back (rx (char word)) 1)
+    (backward-kill-word 1))
+   ((looking-back (rx (char blank)) 1)
+    (delete-horizontal-space t))
+   (t
+    (backward-delete-char 1))))
+
+;; Browse repo in browser
+(defun my/browse-repo()
+  (interactive)
+  (browse-url
+   (let
+       ((rev (magit-rev-abbrev "HEAD"))
+        (repo (forge-get-repository 'stub))
+        (file (magit-file-relative-name buffer-file-name))
+        (highlight
+         (if
+             (use-region-p)
+             (let ((l1 (line-number-at-pos (region-beginning)))
+                   (l2 (line-number-at-pos (- (region-end) 1))))
+               (format "#L%d-L%d" l1 l2))
+           ""
+           )))
+     (forge--format repo (if file
+                             "https://%h/%o/%n/blob/%r/%f%L"
+                           "https://%h/%o/%n/blob/%r")
+                    `((?r . ,rev) (?f . ,file) (?L . ,highlight))))))
+
+(setq lsp-clients-clangd-args
+      '("-j=3"
+        "--background-index"
+        "--clang-tidy"
+        "--completion-style=detailed"
+        "--header-insertion=never"
+        "--header-insertion-decorators=0"))
+(after! lsp-clangd (set-lsp-priority! 'clangd 2))
 
 ;;____________________________________________________________
-;; lsp ignore
-;; (add-to-list 'lsp-file-watch-ignored-directories
-;;              '(".idea" "/opt/homebrew" "node_modules"
-;;                ".git" "build" "_build" "postgres-data")
-;;              )
-
-;; disable copilot warning
-(after! copilot
-  (setq copilot-indent-offset-warning-disable t))
-
-;; add clipboard to the kill-ring before next kill
-(setq save-interprogram-paste-before-kill t)
+;; set-mark symbol at point
+(defun my/mark-symbol-at-point ()
+  (interactive)
+  (unless (region-active-p)
+    (let (bounds pos1 pos2)
+      (setq bounds (bounds-of-thing-at-point 'symbol))
+      (setq pos1 (car bounds))
+      (setq pos2 (cdr bounds))
+      (goto-char pos1)
+      (push-mark pos1 t t)
+      (goto-char pos2)
+      (setq transient-mark-mode  (cons 'only transient-mark-mode)))))

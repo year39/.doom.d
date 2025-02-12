@@ -42,3 +42,4 @@
       :desc "Format buffer"             :nv     "c b"   #'+format/buffer
       :desc "Format region"             :nv     "c r"   #'+format/region
       )
+
